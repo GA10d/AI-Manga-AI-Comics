@@ -2,6 +2,8 @@
 
 [README EN](./README.md) | [SHOWCASE ZH](./SHOWCASE.zh-CN.md) | [SHOWCASE EN](./SHOWCASE.md)
 
+![Gemini showcase cover](./multi-model-comic-workflow/assets/showcase/phase6-gemini-standard.jpg)
+
 这是一个从 `AI_TRPG_616 / version 3.0` 现有业务实现中拆出来的独立漫画生成工作流项目。
 
 它保留了最关键的能力：
@@ -126,6 +128,8 @@ python examples/create_local_project.py
 ```powershell
 python examples/benchmark_six_models.py
 ```
+
+![Workflow benchmark](./showcase/workflow%20benchmark.png)
 
 它会复用同一套漫画 workflow prompt，对比：
 

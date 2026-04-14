@@ -193,23 +193,35 @@ Return JSON only:
 
 ### Google fast 验证页
 
-![Google fast comic](./assets/showcase/google-fast-comic.jpg)
+![Google fast comic](./multi-model-comic-workflow/assets/showcase/google-fast-comic.jpg)
 
 ### Google pro 验证页
 
-![Google pro comic](./assets/showcase/google-pro-comic.jpg)
+![Google pro comic](./multi-model-comic-workflow/assets/showcase/google-pro-comic.jpg)
 
 ### Phase 6 OpenAI standard
 
-![Phase6 OpenAI standard](./assets/showcase/phase6-openai-standard.jpg)
+![Phase6 OpenAI standard](./multi-model-comic-workflow/assets/showcase/phase6-openai-standard.jpg)
+
+### Phase 6 OpenAI fast
+
+![Phase6 OpenAI fast](./multi-model-comic-workflow/assets/showcase/phase6-openai-fast.jpg)
+
+### Phase 6 Gemini standard
+
+![Phase6 Gemini standard](./multi-model-comic-workflow/assets/showcase/phase6-gemini-standard.jpg)
 
 ### Phase 6 Gemini fast
 
-![Phase6 Gemini fast](./assets/showcase/phase6-gemini-fast.jpg)
+![Phase6 Gemini fast](./multi-model-comic-workflow/assets/showcase/phase6-gemini-fast.jpg)
 
 ### Phase 6 Doubao standard
 
-![Phase6 Doubao standard](./assets/showcase/phase6-doubao-standard.jpg)
+![Phase6 Doubao standard](./multi-model-comic-workflow/assets/showcase/phase6-doubao-standard.jpg)
+
+### Phase 6 Doubao fast
+
+![Phase6 Doubao fast](./multi-model-comic-workflow/assets/showcase/phase6-doubao-fast.jpg)
 
 ## Phase 6 六模型对比图
 
@@ -229,7 +241,7 @@ Return JSON only:
 - Doubao standard
 - Doubao fast
 
-![Phase6 model comparison](./assets/showcase/phase6-model-comparison-grid.png)
+![Phase6 model comparison](./multi-model-comic-workflow/assets/showcase/phase6-model-comparison-grid.png)
 
 ## 为什么这份展示有价值
 

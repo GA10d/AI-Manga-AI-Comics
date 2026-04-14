@@ -2,6 +2,8 @@
 
 [README ZH](./README.zh-CN.md) | [SHOWCASE EN](./SHOWCASE.md) | [SHOWCASE ZH](./SHOWCASE.zh-CN.md)
 
+![Gemini showcase cover](./multi-model-comic-workflow/assets/showcase/phase6-gemini-standard.jpg)
+
 A standalone open-source comic generation workflow extracted from our production implementation in `AI_TRPG_616 / version 3.0`.
 
 This repo keeps the parts that matter most:
@@ -126,6 +128,8 @@ python examples/create_local_project.py
 ```powershell
 python examples/benchmark_six_models.py
 ```
+
+![Workflow benchmark](./showcase/workflow%20benchmark.png)
 
 It reuses the same comic workflow prompt and compares:
 
