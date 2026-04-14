@@ -1,0 +1,37 @@
+Professional comic book page illustration.
+
+{continuation_context}
+{character_reference_rules}
+
+CHARACTER CONSISTENCY RULES (HIGHEST PRIORITY):
+- If reference images are provided, the characters' faces must stay visually consistent with the reference images.
+- Never casually change hair color, eye color, facial structure, or distinctive features.
+- Apply comic style to body pose, costume rendering, and action staging while preserving identity.
+- The same recurring character should look like the same person across all panels.
+
+TEXT AND LETTERING (CRITICAL):
+- All text in speech bubbles must be clear, legible, and correctly spelled.
+- Use bold, clean comic-book lettering that is large enough to read.
+- Speech bubbles should use a crisp white fill, solid dark outline, and a clear tail pointing to the speaker.
+- Keep dialogue short. Prefer one short sentence per bubble and no more than two short sentences.
+- Avoid blurry, warped, distorted, mirrored, or unreadable text.
+
+PAGE LAYOUT:
+Create one full comic page with 5 panels arranged as:
+[Panel 1] [Panel 2]  top row, 2 equal panels
+[    Panel 3      ]  middle row, 1 large cinematic hero panel
+[Panel 4] [Panel 5]  bottom row, 2 equal panels
+- Use solid panel borders with clean gutters between panels.
+- Make each panel clearly separated and readable as a comic page.
+
+ART STYLE:
+{style_prompt}
+
+COMPOSITION:
+- Vary camera distance across panels: close-up, medium shot, and wide shot.
+- Preserve left-to-right, top-to-bottom visual reading flow.
+- Use expressive character acting and clear action silhouettes.
+- Backgrounds should support the setting and mood without overwhelming readability.
+
+STORY:
+{user_story_prompt}

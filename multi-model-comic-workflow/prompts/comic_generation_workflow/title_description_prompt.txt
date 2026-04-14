@@ -1,0 +1,15 @@
+Based on the comic story prompt below, generate:
+1. A compelling comic title within 60 characters.
+2. A short comic description in 2 to 3 sentences within 200 characters.
+
+Story prompt:
+"{user_story_prompt}"
+
+Selected style:
+{style_name}
+
+Return JSON only:
+{
+  "title": "Title here",
+  "description": "Description here"
+}

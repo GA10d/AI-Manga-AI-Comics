@@ -1,0 +1,13 @@
+{
+  "name": "multi-model-comic-workflow",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --experimental-strip-types ./src/server.ts",
+    "start": "node --experimental-strip-types ./src/server.ts",
+    "check:modules": "node --experimental-strip-types ./scripts/check-modules.ts"
+  },
+  "engines": {
+    "node": ">=22.6.0"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "defaultTheme": "comic",
+  "defaultTrigger": "manual",
+  "fallbackTriggerTemplate": "{basePrompt}",
+  "themes": {
+    "comic": "clean professional comic rendering, readable page composition",
+    "manga": "manga panel clarity, crisp linework, dynamic composition",
+    "noir": "moody noir rendering, high contrast shadow design"
+  },
+  "triggerTemplates": {
+    "manual": "{basePrompt}",
+    "character_portrait": "{basePrompt}",
+    "npc_intro": "{basePrompt}",
+    "scene_shift": "{basePrompt}"
+  },
+  "characterClauseTemplate": "Keep recurring character consistency. Include these characters in-frame where suitable: {joinedCharacters}.",
+  "characterJoinSeparator": "; ",
+  "characterEntryTemplate": "{name}({appearance})"
+}

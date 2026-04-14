@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "styles": [
+    {
+      "id": "american-modern",
+      "name": "American Modern",
+      "prompt": "contemporary American superhero comic style, bold vibrant colors, dynamic heroic poses, detailed muscular anatomy, cinematic action scenes, modern digital art"
+    },
+    {
+      "id": "manga",
+      "name": "Manga",
+      "prompt": "Japanese manga style, clean precise black linework, screen tone shading, expressive eyes, dynamic speed lines, black and white with impact effects"
+    },
+    {
+      "id": "noir",
+      "name": "Noir",
+      "prompt": "film noir style, high contrast black and white, deep dramatic shadows, 1940s detective aesthetic, heavy bold inking, moody atmospheric lighting"
+    },
+    {
+      "id": "vintage",
+      "name": "Vintage",
+      "prompt": "Golden Age retro comic style, visible halftone dots, limited nostalgic palette, warm paper texture, classic adventure comic feeling"
+    }
+  ]
+}

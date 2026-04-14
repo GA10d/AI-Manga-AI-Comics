@@ -1,0 +1,14 @@
+STORY CONTINUATION CONTEXT:
+This is page {page_number} of an existing comic story.
+
+Recent page prompts:
+{recent_page_prompts}
+
+Story memory summary:
+{story_memory_summary}
+
+Continuation requirements:
+- Continue the same characters, setting, and narrative direction.
+- Reuse important visual motifs from earlier pages when appropriate.
+- Build naturally on the previous events instead of restarting the scene.
+- If a previous page image is available, preserve visual continuity with it.
