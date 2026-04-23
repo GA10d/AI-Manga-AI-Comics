@@ -20,6 +20,21 @@
       "id": "vintage",
       "name": "Vintage",
       "prompt": "Golden Age retro comic style, visible halftone dots, limited nostalgic palette, warm paper texture, classic adventure comic feeling"
-    }
+    },
+    {
+      "id": "color_manga",
+      "name": "Color Manga",
+      "prompt": "full-color Japanese manga style, clean precise linework, vibrant cel shading, expressive eyes, dynamic action composition, rich colorful highlights, dramatic lighting, manga-inspired impact effects, polished anime aesthetic, detailed character rendering, vivid background colors"
+    },
+    {
+    "id": "chibi_color_manga",
+    "name": "Chibi Color Manga",
+    "prompt": "full-color Japanese manga style, all characters in cute chibi style, oversized heads, small bodies, simplified anatomy, clean precise linework, expressive big eyes, vibrant cel shading, lively poses, colorful highlights, manga-inspired effects, playful and charming atmosphere, polished anime aesthetic"
+   },
+  {
+    "id": "pop_art",
+    "name": "Pop Art",
+    "prompt": "pop art style, bold black outlines, vibrant high-contrast colors, comic-book aesthetic, halftone dot patterns, graphic shapes, retro poster feel, exaggerated expressions, flat color blocks, playful visual impact, iconic pop culture inspired design"
+  }
   ]
 }

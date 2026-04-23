@@ -21,6 +21,8 @@ let stylePresetCache: ComicStylePreset[] | null = null;
 const DEFAULT_STYLE_ID = "noir";
 const MAX_RECENT_PAGE_CONTEXT_CHARS = 6000;
 const MAX_MEMORY_SUMMARY_CHARS = 1800;
+const MAX_CHARACTER_REFERENCE_IMAGES = 3;
+const MAX_SCENE_REFERENCE_IMAGES = 1;
 
 function compactWhitespace(input: string): string {
   return input.replace(/\s+/gu, " ").trim();
@@ -217,19 +219,32 @@ function buildCharacterReferenceDescriptor(reference: ComicReferenceImageInput, 
   return `- ${label}: no extra appearance text supplied, so use the image itself as the primary identity reference.`;
 }
 
+function buildSceneReferenceDescriptor(reference: ComicReferenceImageInput, index: number): string {
+  const name = compactWhitespace(reference.name ?? "");
+  const description = compactWhitespace(reference.description ?? "");
+  const label = name.length > 0 ? `${name}` : `Scene ${index + 1}`;
+
+  if (description.length > 0) {
+    return `- ${label}: ${description}`;
+  }
+
+  return `- ${label}: no extra scene description supplied, so use the image itself as the primary environment reference.`;
+}
+
 async function buildCharacterReferenceRules(
   referenceImages: ComicReferenceImageInput[] | undefined
 ): Promise<string> {
   const characterReferences = (referenceImages ?? [])
     .filter((item) => (item.role ?? "character") === "character")
     .filter((item) => compactWhitespace(item.imageUrl).length > 0)
-    .slice(0, 2);
+    .slice(0, MAX_CHARACTER_REFERENCE_IMAGES);
 
   if (characterReferences.length === 0) {
     return "";
   }
 
   const baseRules = await loadPromptFile("character_reference_rules.txt");
+  const descriptorLines = characterReferences.map(buildCharacterReferenceDescriptor);
   const roleSpecificRules =
     characterReferences.length === 1
       ? [
@@ -239,13 +254,39 @@ async function buildCharacterReferenceRules(
         ]
       : [
           "PROJECT-SPECIFIC ENFORCEMENT:",
-          "- Treat the first uploaded image as Character 1's identity reference.",
-          "- Treat the second uploaded image as Character 2's identity reference.",
-          "- Keep both characters visually distinct and individually stable."
+          "- Treat each uploaded image as a different recurring character identity reference.",
+          "- Keep all referenced characters visually distinct and individually stable.",
+          "- When the chapter places multiple referenced characters in the same panel, keep every face identifiable."
         ];
-  const descriptorLines = characterReferences.map(buildCharacterReferenceDescriptor);
 
   return [baseRules, "", "SELECTED REFERENCE CHARACTERS:", ...descriptorLines, "", ...roleSpecificRules].join("\n");
+}
+
+async function buildSceneReferenceRules(
+  referenceImages: ComicReferenceImageInput[] | undefined
+): Promise<string> {
+  const sceneReferences = (referenceImages ?? [])
+    .filter((item) => item.role === "scene")
+    .filter((item) => compactWhitespace(item.imageUrl).length > 0)
+    .slice(0, MAX_SCENE_REFERENCE_IMAGES);
+
+  if (sceneReferences.length === 0) {
+    return "";
+  }
+
+  const baseRules = await loadPromptFile("scene_reference_rules.txt");
+  const descriptorLines = sceneReferences.map(buildSceneReferenceDescriptor);
+
+  return [
+    baseRules,
+    "",
+    "SELECTED REFERENCE SCENES:",
+    ...descriptorLines,
+    "",
+    "PROJECT-SPECIFIC ENFORCEMENT:",
+    "- Treat the uploaded scene image as the primary visual anchor for the environment whenever this chapter remains in that location.",
+    "- Keep the environment recognizable even when panel framing changes."
+  ].join("\n");
 }
 
 export async function buildComicPagePrompt(
@@ -263,16 +304,18 @@ export async function buildComicPagePrompt(
 
   const style = await resolveComicStylePreset(request.styleId);
   const pageNumber = getNextPageNumber(request);
-  const [pageTemplate, continuationContext, characterReferenceRules] = await Promise.all([
+  const [pageTemplate, continuationContext, characterReferenceRules, sceneReferenceRules] = await Promise.all([
     loadPromptFile("page_generation_system_prompt.txt"),
     buildContinuationContext(request, pageNumber),
-    buildCharacterReferenceRules(request.referenceImages)
+    buildCharacterReferenceRules(request.referenceImages),
+    buildSceneReferenceRules(request.referenceImages)
   ]);
 
   return {
     prompt: fillTemplate(pageTemplate, {
       continuation_context: continuationContext ?? "",
       character_reference_rules: characterReferenceRules,
+      scene_reference_rules: sceneReferenceRules,
       style_prompt: style.prompt,
       user_story_prompt: storyPrompt
     }).trim(),

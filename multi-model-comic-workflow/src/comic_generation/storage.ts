@@ -63,6 +63,8 @@ function normalizeProject(comicRoot: string, project: PersistedComicProject): Pe
   const normalizedPages = project.pages
     .map((page) => ({
       ...page,
+      characterReferenceIds: Array.isArray(page.characterReferenceIds) ? page.characterReferenceIds : [],
+      sceneReferenceIds: Array.isArray(page.sceneReferenceIds) ? page.sceneReferenceIds : [],
       image: withNormalizedAssetPaths(comicRoot, comicId, page.image)!
     }))
     .sort((left, right) => left.pageNumber - right.pageNumber);

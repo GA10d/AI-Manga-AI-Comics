@@ -1,0 +1,5 @@
+SCENE REFERENCE RULES:
+- Use the uploaded scene reference image as the primary environment reference for the setting.
+- Preserve the major architectural layout, furniture placement, lighting mood, and dominant colors when the chapter remains in that location.
+- You may vary camera angle, focal length, and composition from panel to panel, but the location should still read as the same place.
+- If the story explicitly shifts to another location inside the page, keep the referenced scene as the opening/default environment and only change settings when the chapter text requires it.

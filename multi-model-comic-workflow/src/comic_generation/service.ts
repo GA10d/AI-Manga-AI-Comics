@@ -48,6 +48,8 @@ const PASS_THROUGH_IMAGE_PROMPT_TEMPLATE_CONFIG: ImageGenerationRequest["promptT
   characterJoinSeparator: ", ",
   characterEntryTemplate: "{name}({appearance})"
 };
+const MAX_CHARACTER_REFERENCE_IMAGES = 3;
+const MAX_SCENE_REFERENCE_IMAGES = 1;
 
 function compactWhitespace(input: string): string {
   return input.replace(/\s+/gu, " ").trim();
@@ -94,11 +96,36 @@ function appendUniqueReferenceImage(
   });
 }
 
+function splitReferenceImages(referenceImages: ComicReferenceImageInput[] | undefined): {
+  characterReferences: ComicReferenceImageInput[];
+  sceneReferences: ComicReferenceImageInput[];
+} {
+  const normalized = (referenceImages ?? []).filter((item) => compactWhitespace(item.imageUrl).length > 0);
+
+  return {
+    characterReferences: normalized
+      .filter((item) => (item.role ?? "character") === "character")
+      .slice(0, MAX_CHARACTER_REFERENCE_IMAGES),
+    sceneReferences: normalized
+      .filter((item) => item.role === "scene")
+      .slice(0, MAX_SCENE_REFERENCE_IMAGES)
+  };
+}
+
 function collectReferenceImages(request: ComicPageGenerationRequest): ImageReferenceInput[] {
   const output: ImageReferenceInput[] = [];
   const seenUrls = new Set<string>();
   const previousPages = [...(request.previousPages ?? [])].sort((left, right) => left.pageNumber - right.pageNumber);
   const latestPreviousPage = previousPages.at(-1);
+  const { characterReferences, sceneReferences } = splitReferenceImages(request.referenceImages);
+
+  for (const item of characterReferences) {
+    appendUniqueReferenceImage(output, seenUrls, item.imageUrl, "character", item.name);
+  }
+
+  for (const item of sceneReferences) {
+    appendUniqueReferenceImage(output, seenUrls, item.imageUrl, "scene", item.name);
+  }
 
   if (latestPreviousPage?.imageUrl) {
     appendUniqueReferenceImage(
@@ -108,10 +135,6 @@ function collectReferenceImages(request: ComicPageGenerationRequest): ImageRefer
       "previous_page",
       `Page ${latestPreviousPage.pageNumber}`
     );
-  }
-
-  for (const item of request.referenceImages ?? []) {
-    appendUniqueReferenceImage(output, seenUrls, item.imageUrl, item.role ?? "character", item.name);
   }
 
   return output;
@@ -168,20 +191,149 @@ async function fileToDataUrl(storagePath: string, mimeType: string | null): Prom
   return `data:${mimeType ?? "image/png"};base64,${bytes.toString("base64")}`;
 }
 
-async function buildPersistedReferenceInputs(project: Awaited<ReturnType<typeof loadComicProjectFromDisk>>): Promise<ComicReferenceImageInput[]> {
-  const references = project.references.filter((item) => item.role === "character").slice(0, 2);
+function selectDefaultProjectReferences(
+  project: Awaited<ReturnType<typeof loadComicProjectFromDisk>>
+) {
+  const latestPage = [...project.pages].sort((left, right) => left.pageNumber - right.pageNumber).at(-1);
+  const latestReferenceIds = new Set([
+    ...(latestPage?.characterReferenceIds ?? []),
+    ...(latestPage?.sceneReferenceIds ?? [])
+  ]);
+
+  if (latestReferenceIds.size > 0) {
+    const selected = project.references.filter((item) => latestReferenceIds.has(item.referenceId));
+    if (selected.length > 0) {
+      return selected;
+    }
+  }
+
+  return [
+    ...project.references.filter((item) => item.role === "character").slice(0, MAX_CHARACTER_REFERENCE_IMAGES),
+    ...project.references.filter((item) => item.role === "scene").slice(0, MAX_SCENE_REFERENCE_IMAGES)
+  ];
+}
+
+async function buildPersistedReferenceInputs(
+  project: Awaited<ReturnType<typeof loadComicProjectFromDisk>>
+): Promise<ComicReferenceImageInput[]> {
+  const references = selectDefaultProjectReferences(project);
   const output: ComicReferenceImageInput[] = [];
 
   for (const item of references) {
     output.push({
-      role: "character",
+      role: item.role,
       name: item.name ?? undefined,
       appearance: item.appearance ?? undefined,
+      description: item.description ?? undefined,
       imageUrl: await fileToDataUrl(item.image.storagePath, item.image.mimeType)
     });
   }
 
   return output;
+}
+
+function buildDefaultProjectReferenceIds(
+  project: Awaited<ReturnType<typeof loadComicProjectFromDisk>>
+): {
+  characterReferenceIds: string[];
+  sceneReferenceIds: string[];
+} {
+  const references = selectDefaultProjectReferences(project);
+  return {
+    characterReferenceIds: references.filter((item) => item.role === "character").map((item) => item.referenceId),
+    sceneReferenceIds: references.filter((item) => item.role === "scene").map((item) => item.referenceId)
+  };
+}
+
+function findMatchingPersistedReference(
+  project: Awaited<ReturnType<typeof loadComicProjectFromDisk>>,
+  reference: ComicReferenceImageInput
+) {
+  const role = reference.role === "scene" ? "scene" : "character";
+  const normalizedName = compactWhitespace(reference.name ?? "");
+  const normalizedSourceUrl = reference.imageUrl.startsWith("data:")
+    ? ""
+    : compactWhitespace(reference.imageUrl);
+
+  return project.references.find((item) => {
+    if (item.role !== role) {
+      return false;
+    }
+
+    const existingName = compactWhitespace(item.name ?? "");
+    if (normalizedName && existingName) {
+      return existingName === normalizedName;
+    }
+
+    const existingSourceUrl = compactWhitespace(item.sourceUrl ?? "");
+    return normalizedSourceUrl.length > 0 && existingSourceUrl === normalizedSourceUrl;
+  });
+}
+
+async function ensurePersistedReferenceSelection(args: {
+  comicRoot: string;
+  comicId: string;
+  project: Awaited<ReturnType<typeof loadComicProjectFromDisk>> | { references: Awaited<ReturnType<typeof loadComicProjectFromDisk>>["references"] };
+  referenceImages: ComicReferenceImageInput[];
+  now: string;
+}): Promise<{
+  nextReferences: Awaited<ReturnType<typeof loadComicProjectFromDisk>>["references"];
+  characterReferenceIds: string[];
+  sceneReferenceIds: string[];
+}> {
+  const nextReferences = [...args.project.references];
+  const characterReferenceIds: string[] = [];
+  const sceneReferenceIds: string[] = [];
+  const { characterReferences, sceneReferences } = splitReferenceImages(args.referenceImages);
+
+  for (const reference of [...characterReferences, ...sceneReferences]) {
+    const existing = findMatchingPersistedReference(
+      { references: nextReferences } as Awaited<ReturnType<typeof loadComicProjectFromDisk>>,
+      reference
+    );
+    const role = reference.role === "scene" ? "scene" : "character";
+
+    if (existing) {
+      if (role === "scene") {
+        sceneReferenceIds.push(existing.referenceId);
+      } else {
+        characterReferenceIds.push(existing.referenceId);
+      }
+      continue;
+    }
+
+    const image = await saveComicAssetToDisk({
+      comicRoot: args.comicRoot,
+      comicId: args.comicId,
+      folderName: "references",
+      fileNameStem: `ref-${role}-${nextReferences.filter((item) => item.role === role).length + 1}-${reference.name || role}`,
+      sourceUrl: reference.imageUrl
+    });
+
+    const persistedReference = {
+      referenceId: `ref_${randomUUID().slice(0, 8)}`,
+      role,
+      name: compactWhitespace(reference.name ?? "") || null,
+      appearance: compactWhitespace(reference.appearance ?? "") || null,
+      description: compactWhitespace(reference.description ?? "") || null,
+      sourceUrl: reference.imageUrl.startsWith("data:") ? null : reference.imageUrl,
+      createdAt: args.now,
+      image
+    };
+
+    nextReferences.push(persistedReference);
+    if (role === "scene") {
+      sceneReferenceIds.push(persistedReference.referenceId);
+    } else {
+      characterReferenceIds.push(persistedReference.referenceId);
+    }
+  }
+
+  return {
+    nextReferences,
+    characterReferenceIds,
+    sceneReferenceIds
+  };
 }
 
 async function buildPersistedPreviousPages(project: Awaited<ReturnType<typeof loadComicProjectFromDisk>>): Promise<ComicPageGenerationRequest["previousPages"]> {
@@ -252,6 +404,7 @@ export async function generateComicPage(request: ComicPageGenerationRequest): Pr
   const promptBundle = await buildComicPagePrompt(request);
   const referenceImages = collectReferenceImages(request);
   const characterReferenceCount = referenceImages.filter((item) => (item.role ?? "character") === "character").length;
+  const sceneReferenceCount = referenceImages.filter((item) => item.role === "scene").length;
   const previousPageReferenceCount = referenceImages.filter((item) => item.role === "previous_page").length;
   const sceneId = buildSceneId(request, promptBundle.pageNumber);
 
@@ -274,6 +427,7 @@ export async function generateComicPage(request: ComicPageGenerationRequest): Pr
     pageNumber: promptBundle.pageNumber,
     continuationContext: promptBundle.continuationContext,
     characterReferenceCount,
+    sceneReferenceCount,
     previousPageReferenceCount
   };
 }
@@ -354,30 +508,13 @@ export async function createPersistedComicProject(comicRoot: string, request: Cr
   const comicId = await createComicId(request.title || request.storyPrompt, now);
   const titleAndDescription = await resolveComicTitleAndDescription(request);
   const generatedPage = await generateComicPage(request);
-
-  const persistedReferences = [];
-  for (const [index, reference] of (request.referenceImages ?? [])
-    .filter((item) => (item.role ?? "character") === "character")
-    .slice(0, 2)
-    .entries()) {
-    const image = await saveComicAssetToDisk({
-      comicRoot,
-      comicId,
-      folderName: "references",
-      fileNameStem: `ref-${index + 1}-${reference.name || "character"}`,
-      sourceUrl: reference.imageUrl
-    });
-
-    persistedReferences.push({
-      referenceId: `ref_${randomUUID().slice(0, 8)}`,
-      role: "character" as const,
-      name: compactWhitespace(reference.name ?? "") || null,
-      appearance: compactWhitespace(reference.appearance ?? "") || null,
-      sourceUrl: reference.imageUrl.startsWith("data:") ? null : reference.imageUrl,
-      createdAt: now,
-      image
-    });
-  }
+  const persistedReferenceSelection = await ensurePersistedReferenceSelection({
+    comicRoot,
+    comicId,
+    project: { references: [] },
+    referenceImages: request.referenceImages ?? [],
+    now
+  });
 
   const pageId = `page_${randomUUID().slice(0, 8)}`;
   const persistedImage = await saveComicAssetToDisk({
@@ -399,7 +536,7 @@ export async function createPersistedComicProject(comicRoot: string, request: Cr
     pageCount: 1,
     storageRoot: "",
     coverImage: persistedImage,
-    references: persistedReferences,
+    references: persistedReferenceSelection.nextReferences,
     pages: [
       {
         pageId,
@@ -412,7 +549,8 @@ export async function createPersistedComicProject(comicRoot: string, request: Cr
         createdAt: now,
         style: generatedPage.style,
         image: persistedImage,
-        characterReferenceIds: persistedReferences.map((item) => item.referenceId),
+        characterReferenceIds: persistedReferenceSelection.characterReferenceIds,
+        sceneReferenceIds: persistedReferenceSelection.sceneReferenceIds,
         previousPageNumber: null
       }
     ]
@@ -435,6 +573,19 @@ export async function appendPersistedComicPage(
     (request.referenceImages?.length ?? 0) > 0
       ? request.referenceImages!
       : await buildPersistedReferenceInputs(project);
+  const persistedReferenceSelection =
+    (request.referenceImages?.length ?? 0) > 0
+      ? await ensurePersistedReferenceSelection({
+          comicRoot,
+          comicId,
+          project,
+          referenceImages: requestReferenceImages,
+          now
+        })
+      : {
+          nextReferences: [...project.references],
+          ...buildDefaultProjectReferenceIds(project)
+        };
   const previousPages = await buildPersistedPreviousPages(project);
 
   const generatedPage = await generateComicPage({
@@ -450,44 +601,6 @@ export async function appendPersistedComicPage(
     runtimeImageModelConfig: request.runtimeImageModelConfig
   });
 
-  const nextReferences = [...project.references];
-  const newReferenceIds: string[] = [];
-
-  if ((request.referenceImages?.length ?? 0) > 0) {
-    for (const [index, reference] of request.referenceImages!
-      .filter((item) => (item.role ?? "character") === "character")
-      .slice(0, 2)
-      .entries()) {
-      const image = await saveComicAssetToDisk({
-        comicRoot,
-        comicId,
-        folderName: "references",
-        fileNameStem: `ref-${project.references.length + index + 1}-${reference.name || "character"}`,
-        sourceUrl: reference.imageUrl
-      });
-
-      const referenceId = `ref_${randomUUID().slice(0, 8)}`;
-      nextReferences.push({
-        referenceId,
-        role: "character",
-        name: compactWhitespace(reference.name ?? "") || null,
-        appearance: compactWhitespace(reference.appearance ?? "") || null,
-        sourceUrl: reference.imageUrl.startsWith("data:") ? null : reference.imageUrl,
-        createdAt: now,
-        image
-      });
-      newReferenceIds.push(referenceId);
-    }
-  }
-
-  const carriedReferenceIds =
-    newReferenceIds.length > 0
-      ? newReferenceIds
-      : project.references
-          .filter((item) => item.role === "character")
-          .slice(0, 2)
-          .map((item) => item.referenceId);
-
   const pageId = `page_${randomUUID().slice(0, 8)}`;
   const persistedImage = await saveComicAssetToDisk({
     comicRoot,
@@ -501,7 +614,7 @@ export async function appendPersistedComicPage(
     ...project,
     updatedAt: now,
     pageCount: project.pageCount + 1,
-    references: nextReferences,
+    references: persistedReferenceSelection.nextReferences,
     pages: [
       ...project.pages,
       {
@@ -515,7 +628,8 @@ export async function appendPersistedComicPage(
         createdAt: now,
         style: generatedPage.style,
         image: persistedImage,
-        characterReferenceIds: carriedReferenceIds,
+        characterReferenceIds: persistedReferenceSelection.characterReferenceIds,
+        sceneReferenceIds: persistedReferenceSelection.sceneReferenceIds,
         previousPageNumber: project.pages.at(-1)?.pageNumber ?? null
       }
     ]

@@ -2,6 +2,7 @@ Professional comic book page illustration.
 
 {continuation_context}
 {character_reference_rules}
+{scene_reference_rules}
 
 CHARACTER CONSISTENCY RULES (HIGHEST PRIORITY):
 - If reference images are provided, the characters' faces must stay visually consistent with the reference images.

@@ -1,15 +1,9 @@
-SINGLE CHARACTER REFERENCE RULES:
-- Use the uploaded reference image as the exact identity reference for the protagonist.
-- Match core facial traits as closely as the model allows: eyes, nose, mouth, hairline, face shape, skin tone.
-- Keep the same character recognizable in every panel.
+CHARACTER REFERENCE RULES:
+- Treat every uploaded character image as a recurring identity reference.
+- Match core facial traits as closely as the model allows: eyes, nose, mouth, hairline, face shape, skin tone, and other distinctive features.
+- Keep each referenced character individually recognizable across all 5 panels.
 - Apply the selected comic style to rendering, pose, action, and costume details without losing identity.
-
-DUAL CHARACTER REFERENCE RULES:
-- Treat the first uploaded image as Character 1's identity reference.
-- Treat the second uploaded image as Character 2's identity reference.
-- Keep both characters visually distinct and individually stable.
-- When the scene allows, show both characters together in most panels.
-- Do not merge, swap, or drift their facial identities.
+- Do not merge, swap, or drift the referenced characters' facial identities.
 
 GENERAL NOTES:
 - Reference images are higher priority than casual stylistic variation.

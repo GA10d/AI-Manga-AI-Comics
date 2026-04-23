@@ -39,6 +39,7 @@ export type TextGenerationMeta = {
 export type ImageReferenceRole =
   | "character"
   | "previous_page"
+  | "scene"
   | "style_reference";
 
 export type ImagePromptTrigger =
@@ -102,9 +103,10 @@ export type ComicStylePreset = {
 
 export type ComicReferenceImageInput = {
   imageUrl: string;
-  role?: "character" | "previous_page";
+  role?: "character" | "scene" | "previous_page";
   name?: string;
   appearance?: string;
+  description?: string;
 };
 
 export type ComicPreviousPageInput = {
@@ -133,6 +135,7 @@ export type ComicPageGenerationResponse = ImageGenerationResponse & {
   pageNumber: number;
   continuationContext: string | null;
   characterReferenceCount: number;
+  sceneReferenceCount: number;
   previousPageReferenceCount: number;
 };
 
@@ -167,9 +170,10 @@ export type PersistedComicAsset = {
 
 export type PersistedComicReference = {
   referenceId: string;
-  role: "character";
+  role: "character" | "scene";
   name?: string | null;
   appearance?: string | null;
+  description?: string | null;
   sourceUrl?: string | null;
   createdAt: string;
   image: PersistedComicAsset;
@@ -187,6 +191,7 @@ export type PersistedComicPage = {
   style: ComicStylePreset;
   image: PersistedComicAsset;
   characterReferenceIds: string[];
+  sceneReferenceIds: string[];
   previousPageNumber: number | null;
 };
 
