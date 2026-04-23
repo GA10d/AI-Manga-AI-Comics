@@ -2,19 +2,19 @@
 
 [English README](./README.md) | [展示页中文](./SHOWCASE.zh-CN.md) | [Showcase EN](./SHOWCASE.md)
 
-![Phase 6 comparison grid](./multi-model-comic-workflow/assets/showcase/phase6-model-comparison-grid.png)
+![Phase 6 comparison grid](https://raw.githubusercontent.com/GA10d/AI-Manga-AI-Comics/main/multi-model-comic-workflow/assets/showcase/phase6-model-comparison-grid.png)
 
 本仓库是 [AI_TRPG](https://github.com/GA10d/AI_TRPG) 的伴生项目，承接 AI_TRPG 里的漫画生成链路，并将这部分能力整理成可以单独运行、单独调试、单独扩展的子项目。
 
-同时，它也是基于开源 [AI Comic Factory](https://github.com/jbilcke-hf/ai-comic-factory) 持续演化出来的二次开发版本；和只演示“输入一句话生成一页图”的方案不同，这个仓库更强调多页漫画工作流、长程稳定性，以及画风的易扩展性。
+同时，它也是基于一个开源 AI comic 项目持续演化出来的二次开发版本；和只演示“输入一句话生成一页图”的方案不同，这个仓库更强调多页漫画工作流、长程稳定性，以及画风的易扩展性。
 
-English summary: this repo is the comic-generation companion project for AI_TRPG, evolved from AI Comic Factory into a reusable, long-context, multi-page workflow.
+English summary: this repo is the comic-generation companion project for AI_TRPG, evolved from an open-source AI comic project into a reusable, long-context, multi-page workflow.
 
 ## 项目定位
 
 - 它是 `AI_TRPG` 的伴生项目，不是孤立的 demo。
 - 它把原本嵌在更大业务流程里的漫画模块拆了出来，方便独立复用。
-- 它基于 `AI Comic Factory` 的开源思路继续做工程化二次开发。
+- 它基于一个开源 AI comic 项目的思路继续做工程化二次开发。
 - 它服务的重点不是“单次出一张图”，而是“连续多页漫画稳定生成”。
 
 ## 这个项目重点解决什么
@@ -52,7 +52,7 @@ English summary: this repo is the comic-generation companion project for AI_TRPG
 
 | 黑白风格 | 全彩风格 |
 | --- | --- |
-| ![黑白风格示例](./showcase/black.jpg) | ![全彩风格示例](./showcase/full%20color.jpg) |
+| ![黑白风格示例](https://raw.githubusercontent.com/GA10d/AI-Manga-AI-Comics/main/showcase/black.jpg) | ![全彩风格示例](https://raw.githubusercontent.com/GA10d/AI-Manga-AI-Comics/main/showcase/full%20color.jpg) |
 
 ### 3. 同一 workflow 复用多模型
 
@@ -92,13 +92,19 @@ English summary: this repo is the comic-generation companion project for AI_TRPG
 
 | Gemini Standard | OpenAI Standard | Doubao Standard |
 | --- | --- | --- |
-| ![Gemini Standard](./multi-model-comic-workflow/assets/showcase/phase6-gemini-standard.jpg) | ![OpenAI Standard](./multi-model-comic-workflow/assets/showcase/phase6-openai-standard.jpg) | ![Doubao Standard](./multi-model-comic-workflow/assets/showcase/phase6-doubao-standard.jpg) |
+| ![Gemini Standard](https://raw.githubusercontent.com/GA10d/AI-Manga-AI-Comics/main/multi-model-comic-workflow/assets/showcase/phase6-gemini-standard.jpg) | ![OpenAI Standard](https://raw.githubusercontent.com/GA10d/AI-Manga-AI-Comics/main/multi-model-comic-workflow/assets/showcase/phase6-openai-standard.jpg) | ![Doubao Standard](https://raw.githubusercontent.com/GA10d/AI-Manga-AI-Comics/main/multi-model-comic-workflow/assets/showcase/phase6-doubao-standard.jpg) |
 
 ### 六模型对比图
 
-![Phase 6 model comparison](./multi-model-comic-workflow/assets/showcase/phase6-model-comparison-grid.png)
+![Phase 6 model comparison](https://raw.githubusercontent.com/GA10d/AI-Manga-AI-Comics/main/multi-model-comic-workflow/assets/showcase/phase6-model-comparison-grid.png)
 
 这张图里变化的只有模型本身；workflow、故事设定、页面结构和 continuity 策略都保持一致。这也是本项目最想强调的一点：先把可复用的漫画工作流做稳定，再去替换底层模型。
+
+### Workflow benchmark
+
+仓库里还保留了一张 workflow benchmark 图，用来展示同一套工作流在不同模型配置下的对比视图：
+
+![Workflow benchmark](https://raw.githubusercontent.com/GA10d/AI-Manga-AI-Comics/main/showcase/workflow%20benchmark.png)
 
 ## 快速开始
 

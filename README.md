@@ -2,13 +2,13 @@
 
 [简体中文](./README.zh-CN.md) | [Showcase EN](./SHOWCASE.md) | [展示页中文](./SHOWCASE.zh-CN.md)
 
-![Phase 6 comparison grid](./multi-model-comic-workflow/assets/showcase/phase6-model-comparison-grid.png)
+![Phase 6 comparison grid](https://raw.githubusercontent.com/GA10d/AI-Manga-AI-Comics/main/multi-model-comic-workflow/assets/showcase/phase6-model-comparison-grid.png)
 
 This repository is the comic-generation companion project for [AI_TRPG](https://github.com/GA10d/AI_TRPG). It packages the comic workflow we split out from our larger production pipeline into a standalone, reusable module.
 
-It is also a secondary development based on the open-source [AI Comic Factory](https://github.com/jbilcke-hf/ai-comic-factory), but the goal here is no longer a one-off "generate a comic from a prompt" demo. The goal is a stable multi-page workflow with continuity, persistent references, multi-model switching, and easy style extension.
+It is also a secondary development based on an open-source AI comic project, but the goal here is no longer a one-off "generate a comic from a prompt" demo. The goal is a stable multi-page workflow with continuity, persistent references, multi-model switching, and easy style extension.
 
-中文简介：本仓库是 [AI_TRPG](https://github.com/GA10d/AI_TRPG) 的伴生项目，也是基于开源 [AI Comic Factory](https://github.com/jbilcke-hf/ai-comic-factory) 持续演化出来的漫画生成工作流模块，重点放在长程稳定性、跨页 continuity 和画风扩展能力上。
+中文简介：本仓库是 [AI_TRPG](https://github.com/GA10d/AI_TRPG) 的伴生项目，也是基于一个开源 AI comic 项目持续演化出来的漫画生成工作流模块，重点放在长程稳定性、跨页 continuity 和画风扩展能力上。
 
 ## Why This Repo Exists
 
@@ -52,7 +52,7 @@ The same comic-page workflow can also stretch across very different visual targe
 
 | Black-and-white style | Full-color style |
 | --- | --- |
-| ![Black and white style example](./showcase/black.jpg) | ![Full color style example](./showcase/full%20color.jpg) |
+| ![Black and white style example](https://raw.githubusercontent.com/GA10d/AI-Manga-AI-Comics/main/showcase/black.jpg) | ![Full color style example](https://raw.githubusercontent.com/GA10d/AI-Manga-AI-Comics/main/showcase/full%20color.jpg) |
 
 ### 3. One workflow, multiple models
 
@@ -92,13 +92,19 @@ All images below follow the same page-level workflow idea: the story setup and c
 
 | Gemini Standard | OpenAI Standard | Doubao Standard |
 | --- | --- | --- |
-| ![Gemini Standard](./multi-model-comic-workflow/assets/showcase/phase6-gemini-standard.jpg) | ![OpenAI Standard](./multi-model-comic-workflow/assets/showcase/phase6-openai-standard.jpg) | ![Doubao Standard](./multi-model-comic-workflow/assets/showcase/phase6-doubao-standard.jpg) |
+| ![Gemini Standard](https://raw.githubusercontent.com/GA10d/AI-Manga-AI-Comics/main/multi-model-comic-workflow/assets/showcase/phase6-gemini-standard.jpg) | ![OpenAI Standard](https://raw.githubusercontent.com/GA10d/AI-Manga-AI-Comics/main/multi-model-comic-workflow/assets/showcase/phase6-openai-standard.jpg) | ![Doubao Standard](https://raw.githubusercontent.com/GA10d/AI-Manga-AI-Comics/main/multi-model-comic-workflow/assets/showcase/phase6-doubao-standard.jpg) |
 
 ### Six-model comparison
 
-![Phase 6 model comparison](./multi-model-comic-workflow/assets/showcase/phase6-model-comparison-grid.png)
+![Phase 6 model comparison](https://raw.githubusercontent.com/GA10d/AI-Manga-AI-Comics/main/multi-model-comic-workflow/assets/showcase/phase6-model-comparison-grid.png)
 
 Only the model changes in this comparison. The workflow, story prompt, page structure, and continuity strategy stay the same. That is the key point of this repo: reusable workflow first, provider choice second.
+
+### Workflow benchmark
+
+The repository also includes a benchmark view for comparing the same workflow under different model configurations:
+
+![Workflow benchmark](https://raw.githubusercontent.com/GA10d/AI-Manga-AI-Comics/main/showcase/workflow%20benchmark.png)
 
 ## Quick Start
 
